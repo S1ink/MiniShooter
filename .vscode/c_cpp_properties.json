@@ -1,0 +1,41 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.19041.0",
+            "compilerPath": "D:\\Applications\\Visual Studio 2022\\VC\\Tools\\MSVC\\14.32.31326\\bin\\Hostx64\\x64\\cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-msvc-x64"
+        },
+        {
+            "name": "CC-ARM-DESKTOP-8GI6FFU",   // my desktop computer
+                "includePath": [
+                    "${workspaceFolder}/**",
+                    "${workspaceFolder}/VisionServer/lib-vs/include",
+                    "${workspaceFolder}/VisionServer/lib-vs/additions",
+                    "${workspaceFolder}/VisionServer/lib-vs/src",
+                    "${workspaceFolder}/VisionServer/lib-vs/include/opencv4"
+                ],
+                "defines": [
+                    "UNICODE",
+                    "_UNICODE",
+                    "__linux__",
+                    "__unix__"
+                ],
+                "compilerPath": "D:\\Programs\\Raspbian10-Windows64-Toolchain-8.3.0\\raspbian10\\bin\\arm-raspbian10-linux-gnueabihf-g++.exe",
+                "cStandard": "c17",
+                "cppStandard": "c++17",
+                "intelliSenseMode": "linux-gcc-arm"
+        }
+    ],
+    "version": 4
+}
