@@ -35,7 +35,27 @@
                 "cStandard": "c17",
                 "cppStandard": "c++17",
                 "intelliSenseMode": "linux-gcc-arm"
-        }
+        },
+        {
+            "name": "CC-ARM-DESKTOP-R6IKQEI",   // my laptop
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/VisionServer/lib-vs/include",
+                "${workspaceFolder}/VisionServer/lib-vs/additions",
+                "${workspaceFolder}/VisionServer/lib-vs/src",
+                "${workspaceFolder}/VisionServer/lib-vs/include/opencv4"
+            ],
+            "defines": [
+                "UNICODE",
+                "_UNICODE",
+                "__linux__",
+                "__unix__"
+            ],
+            "compilerPath": "C:\\Packages\\raspbian10\\bin\\arm-raspbian10-linux-gnueabihf-g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-arm"
+        },
     ],
     "version": 4
 }
