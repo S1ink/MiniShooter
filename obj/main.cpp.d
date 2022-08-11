@@ -1,4 +1,12 @@
 obj/main.cpp.o: src/main.cpp VisionServer/lib-vs/include/pigpio.h \
+ VisionServer/lib-vs/include/frc/DriverStation.h \
+ VisionServer/lib-vs/include/units/time.h \
+ VisionServer/lib-vs/include/units/base.h \
+ VisionServer/lib-vs/include/fmt/format.h \
+ VisionServer/lib-vs/include/fmt/core.h \
+ VisionServer/lib-vs/include/wpi/SymbolExports.h \
+ VisionServer/lib-vs/include/frc/fmt/Units.h \
+ VisionServer/lib-vs/include/wpi/deprecated.h \
  VisionServer/lib-vs/src/core/visionserver2.h \
  VisionServer/lib-vs/include/opencv4/opencv2/opencv.hpp \
  VisionServer/lib-vs/include/opencv4/opencv2/opencv_modules.hpp \
@@ -135,7 +143,6 @@ obj/main.cpp.o: src/main.cpp VisionServer/lib-vs/include/pigpio.h \
  VisionServer/lib-vs/include/networktables/NetworkTableInstance.h \
  VisionServer/lib-vs/include/networktables/NetworkTableInstance.inc \
  VisionServer/lib-vs/include/cameraserver/CameraServer.h \
- VisionServer/lib-vs/include/wpi/deprecated.h \
  VisionServer/lib-vs/include/cscore.h \
  VisionServer/lib-vs/include/cscore_c.h \
  VisionServer/lib-vs/include/cscore_cpp.h \
@@ -152,6 +159,22 @@ obj/main.cpp.o: src/main.cpp VisionServer/lib-vs/include/pigpio.h \
  src/vision.h VisionServer/lib-vs/src/core/extensions.h
 
 VisionServer/lib-vs/include/pigpio.h:
+
+VisionServer/lib-vs/include/frc/DriverStation.h:
+
+VisionServer/lib-vs/include/units/time.h:
+
+VisionServer/lib-vs/include/units/base.h:
+
+VisionServer/lib-vs/include/fmt/format.h:
+
+VisionServer/lib-vs/include/fmt/core.h:
+
+VisionServer/lib-vs/include/wpi/SymbolExports.h:
+
+VisionServer/lib-vs/include/frc/fmt/Units.h:
+
+VisionServer/lib-vs/include/wpi/deprecated.h:
 
 VisionServer/lib-vs/src/core/visionserver2.h:
 
@@ -424,8 +447,6 @@ VisionServer/lib-vs/include/networktables/NetworkTableInstance.h:
 VisionServer/lib-vs/include/networktables/NetworkTableInstance.inc:
 
 VisionServer/lib-vs/include/cameraserver/CameraServer.h:
-
-VisionServer/lib-vs/include/wpi/deprecated.h:
 
 VisionServer/lib-vs/include/cscore.h:
 
