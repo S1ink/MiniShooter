@@ -26,6 +26,7 @@ struct PWMV;
 void init_stepper(const Stepper&);
 void stop_stepper(const Stepper&);
 void set_stepper(const Stepper&, uint);
+void set_stepper_(const Stepper&, uint);
 
 void init_pwm(const PWMV&);
 void stop_pwm(const PWMV&);

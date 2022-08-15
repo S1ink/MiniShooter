@@ -21,6 +21,12 @@ void set_stepper(const Stepper& s, uint i) {	// i % stepper_indices
 	gpioWrite(s.B1(), 0b1 & (stepper_steps >> (i & (stepper_indices - 1) * 4 + 1)));
 	gpioWrite(s.B2(), 0b1 & (stepper_steps >> (i & (stepper_indices - 1) * 4)));
 }
+void set_stepper_(const Stepper& s, uint i) {	// it seems to be able to handle faster setting the pins like this (?)
+	gpioWrite(s.A1(), 0b1 & (stepper_steps >> (i & (stepper_indices - 1) * 4)));
+	gpioWrite(s.A2(), 0b1 & (stepper_steps >> (i & (stepper_indices - 1) * 4 + 1)));
+	gpioWrite(s.B1(), 0b1 & (stepper_steps >> (i & (stepper_indices - 1) * 4 + 2)));
+	gpioWrite(s.B2(), 0b1 & (stepper_steps >> (i & (stepper_indices - 1) * 4 + 3)));
+}
 
 void init_pwm(const PWMV& p) {
 	gpioSetMode(p.PWM(), PI_OUTPUT);

@@ -3,8 +3,6 @@
 
 #include <pigpio.h>
 
-#include <frc/DriverStation.h>
-
 #include <core/visionserver2.h>
 #include <core/vision.h>
 //#include <cpp-tools/src/sighandle.h>
@@ -138,51 +136,77 @@ char getch(int block = 1) {
 #define ERASE_BELOW	"\e[J"
 
 
-int main() {
+void run_stepper(const Stepper& s, const float& t, std::atomic_bool& reset, bool& exit) {
+	float error, ratio = 28.f / 42.f;
+	int64_t index = 0;
+	for(;!exit;) {
+		if(reset) {
+			index = 0;
+			reset = false;
+		}
+		error = t - ((float)index / stepper_steps_per_rotation * 360.f * ratio);
+		if((int)(error * 8) != 0) {		// eighth of a degree resolution
+			index += sgn(error);
+			set_stepper_(s, index);
+		} else {
+			stop_stepper(s);
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(4));
+	}
+}
 
-	// for(;;) {
-	// 	std::cout << 
-	// 		"DS Status: " << (frc::DriverStation::IsDSAttached() ? "Online\n" : "Offline\n");
-	// 	for(size_t s = 0; s < frc::DriverStation::kJoystickPorts; s++) {
-	// 		std::cout << "\tStick " << (s + 1) << " - Connected?: " << frc::DriverStation::IsJoystickConnected(s) <<
-	// 			"  Axis Count: " << frc::DriverStation::GetStickAxisCount(s) << 
-	// 			"  Button Count: " << frc::DriverStation::GetStickButtonCount(s) << '\n';
-	// 	}
-	// 	std::cout << "\n\n";
-	// 	std::cout.flush();
-	// 	std::this_thread::sleep_for(std::chrono::seconds(5));
-	// }
+int main() {
 
 	gpioInitialise();
 
 	init_output(MAIN_PWM_PIN);
 	init_output(FEED_FORWARD_PIN);
 	init_output(FEED_BACKWARD_PIN);
+	init_stepper(HOOD_PINS);
 
-	/*
-	space - toggle main
-	enter - toggle feed
-	u/d arrows - main pwm
-	l/r arrows - change feed direction
-	*/
+	// int x = 0;
+	// for(; x < 1000; x++) {
+	// 	set_stepper_(HOOD_PINS, x);
+	// 	std::this_thread::sleep_for(std::chrono::microseconds(2000));
+	// }
+	// for(; x > 0; x--) {
+	// 	set_stepper_(HOOD_PINS, x);
+	// 	std::this_thread::sleep_for(std::chrono::microseconds(2000));
+	// }
+	// stop_stepper(HOOD_PINS);
+	// gpioTerminate();
+	// return;
 
-	float main_speed = 50.f;
-	bool main = false, feed = false, forward = true;
+	float main_speed = 50.f, hood_angle = 0.f;
+	bool main = false, feed = false, forward = true, end = false;
+	std::atomic_bool reset_hood{false};
 
 	std::cout <<
-		"Controls:\n[space] - toggle main\n[enter] - toggle feed\n[u/d] - adjust main speed\n[l/r] - set feed direction\n[e] - exit\n"
+		"Controls:\n"
+		"[space] - toggle main\n"
+		"[enter] - toggle feed\n"
+		"[u/d] - adjust main speed\n"
+		"[l/r] - adjust hood angle\n"
+		"[z] - zero hood\n"
+		"[f] - toggle feed direction\n"
+		"[e] - exit\n"
 	<< std::endl;
 	char i[5] = {0}, last[5] = {0};
 	int s = 1;
+
+	std::thread stepper_runner(run_stepper, Stepper(HOOD_PINS), std::cref(hood_angle), std::ref(reset_hood), std::ref(end));
+
 	for(;;) {
 		std::cout <<
 			"| MAIN: " << (main ? "on  | FEED: ":"off | FEED: ") <<
 			(feed ? "on  | PWM: ":"off | PWM: ") << main_speed <<
-			" | DIRECTION: " << forward << " |   " <<
+			" | ANGLE: " << hood_angle << " | DIRECTION: " << forward << " |   " <<
 		std::endl;
 
 		i[0] = getch();
 		if(i[0] == 'e') {
+			end = true;
+			stepper_runner.join();
 			break;
 		}
 		while(i[s] = getch(0)) {
@@ -203,7 +227,17 @@ int main() {
 				set_pwm(MAIN_PWM_PIN, main_speed);
 			}
 		}
-		if(!strncmp(i, A_LEFT, 3) || !strncmp(i, A_RIGHT, 3)) {
+		if(!strncmp(i, A_LEFT, 3)) {
+			hood_angle -= 1.f;
+		}
+		if(!strncmp(i, A_RIGHT, 3)) {
+			hood_angle += 1.f;
+		}
+		if(i[0] == 'z') {
+			hood_angle = 0.f;
+			reset_hood = true;
+		}
+		if(i[0] == 'f') {
 			forward = !forward;
 			gpioWrite(FEED_FORWARD_PIN, feed && forward);
 			gpioWrite(FEED_BACKWARD_PIN, feed && !forward);
@@ -226,59 +260,6 @@ int main() {
 		// }
 		// std::cout << std::endl;
 		s = 1;
-
-
-		// i = std::cin.get();
-		// if(i >= '0' && i <= '9') {
-		// 	std::cin.unget();
-		// 	uint16_t n;
-		// 	std::cin >> n;
-		// 	gpioPWM(PWM, (float)n / 100 * 255);
-		// 	std::cout << "Set PWM to " << n << "%\n";
-		// } else {
-		// 	switch(i) {
-		// 		case 'f': {
-		// 			gpioWrite(FORWARD, PI_HIGH);
-		// 			gpioWrite(BACKWARD, PI_LOW);
-		// 			std::cout << "Forward\n";
-		// 			break;
-		// 		}
-		// 		case 'b': {
-		// 			gpioWrite(FORWARD, PI_LOW);
-		// 			gpioWrite(BACKWARD, PI_HIGH);
-		// 			std::cout << "Backward\n";
-		// 			break;
-		// 		}
-		// 		case 's': {
-		// 			gpioWrite(FORWARD, PI_LOW);
-		// 			gpioWrite(BACKWARD, PI_LOW);
-		// 			std::cout << "Stop\n";
-		// 			break;
-		// 		}
-		// 		case 'r': {
-		// 			gpioWrite(FORWARD, PI_HIGH);
-		// 			gpioWrite(BACKWARD, PI_LOW);
-		// 			std::cout << "Run\n";
-		// 			break;
-		// 		}
-		// 		case 'e': {
-		// 			std::cout << "Exit\n";
-		// 			gpioWrite(FORWARD, PI_LOW);
-		// 			gpioWrite(BACKWARD, PI_LOW);
-		// 			gpioWrite(PWM, PI_LOW);
-		// 			gpioTerminate();
-		// 			return;
-		// 		}
-		// 		case '\r':
-		// 		case '\n':
-		// 		{
-		// 			break;
-		// 		}
-		// 		default: {
-		// 			std::cout << "Invalid option: " << i << std::endl;
-		// 		}
-		// 	}
-		// }
 
 	}
 
